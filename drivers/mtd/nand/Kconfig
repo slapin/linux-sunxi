@@ -124,7 +124,7 @@ config MTD_NAND_OMAP2
 
 config MTD_NAND_SUNXI
 	tristate "NAND Flash device on Allwinner A10"
-	depends on ARCH_SUN4I
+	depends on ARCH_SUN4I || ARCH_SUN5I
 	help
           Support for NAND flash on Allwinner A10
 
