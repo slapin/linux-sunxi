@@ -27,7 +27,6 @@
 
 #include "nfc.h"
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Linux charactor device interface
 //////////////////////////////////////////////////////////////////////////////
@@ -41,15 +40,16 @@ static char *read_buff;
 
 static int nand1k_open(struct inode *inode, struct file *file)
 {
-    return 0;
+	return 0;
 }
 
 static int nand1k_close(struct inode *inode, struct file *file)
 {
-    return 0;
+	return 0;
 }
 
-static int nand1k_read(struct file *filp, char __user *buff, size_t count, loff_t *f_pos)
+static int nand1k_read(struct file *filp, char __user * buff, size_t count,
+		       loff_t * f_pos)
 {
 	loff_t offs = *f_pos;
 	uint32_t len, ret, page, offset;
@@ -63,10 +63,11 @@ static int nand1k_read(struct file *filp, char __user *buff, size_t count, loff_
 			len = count - size;
 		nfc_read_page1k(page, read_buff);
 		ret = copy_to_user(buff, read_buff + offset, len);
-		printk(KERN_INFO "nand1k read page=%x offset=%x len=%x\n", page, offset, len);
-		printk(KERN_INFO "nand1k %x %x %x %x %x %x %x %x\n", 
-			   read_buff[0], read_buff[1], read_buff[2], read_buff[3],
-			   read_buff[4], read_buff[5], read_buff[6], read_buff[7]);
+		printk(KERN_INFO "nand1k read page=%x offset=%x len=%x\n", page,
+		       offset, len);
+		printk(KERN_INFO "nand1k %x %x %x %x %x %x %x %x\n",
+		       read_buff[0], read_buff[1], read_buff[2], read_buff[3],
+		       read_buff[4], read_buff[5], read_buff[6], read_buff[7]);
 		size += len - ret;
 		offs += len - ret;
 		buff += len - ret;
@@ -74,22 +75,23 @@ static int nand1k_read(struct file *filp, char __user *buff, size_t count, loff_
 			break;
 	}
 	*f_pos += size;
-    return size;
+	return size;
 }
 
-static int nand1k_write(struct file *filp, const char __user *buff, size_t count, loff_t *f_pos)
+static int nand1k_write(struct file *filp, const char __user * buff,
+			size_t count, loff_t * f_pos)
 {
-    return 0;
+	return 0;
 }
 
 static long nand1k_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
-    switch (cmd) {
-    default:
+	switch (cmd) {
+	default:
 		return -ENOTTY;
-    }
+	}
 
-    return 0;
+	return 0;
 }
 
 struct file_operations nand1k_fops = {
@@ -113,26 +115,27 @@ int nand1k_init(void)
 	}
 
 	dev_class = class_create(THIS_MODULE, DEV_CLASS_NAME);
-    if (IS_ERR(dev_class)) {
+	if (IS_ERR(dev_class)) {
 		printk(KERN_ERR "Create device class error\n");
 		err = PTR_ERR(dev_class);
 		goto error1;
-    }
+	}
 
 	nand1k_major = register_chrdev(0, CHAR_DEV_NAME, &nand1k_fops);
-    if (nand1k_major < 0) {
+	if (nand1k_major < 0) {
 		printk(KERN_ERR "register_chrdev fail\n");
 		err = nand1k_major;
 		goto error2;
-    }
-
-    // Send uevents to udev, so it'll create /dev nodes
-    dev = device_create(dev_class, NULL, MKDEV(nand1k_major, 0), NULL, CHAR_DEV_NAME);
-    if (IS_ERR(dev)) {
+	}
+	// Send uevents to udev, so it'll create /dev nodes
+	dev =
+	    device_create(dev_class, NULL, MKDEV(nand1k_major, 0), NULL,
+			  CHAR_DEV_NAME);
+	if (IS_ERR(dev)) {
 		printk(KERN_ERR "device_create fail\n");
 		err = PTR_ERR(dev);
 		goto error3;
-    }
+	}
 
 	return 0;
 
@@ -149,9 +152,7 @@ error0:
 void nand1k_exit(void)
 {
 	device_destroy(dev_class, MKDEV(nand1k_major, 0));
-    unregister_chrdev(nand1k_major, CHAR_DEV_NAME);
+	unregister_chrdev(nand1k_major, CHAR_DEV_NAME);
 	class_destroy(dev_class);
 	kfree(read_buff);
 }
-
-

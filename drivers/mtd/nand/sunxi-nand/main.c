@@ -57,26 +57,24 @@ static int __devinit nand_probe(struct platform_device *pdev)
 		ERR_INFO("nfc first inti fail\n");
 		goto out_free_info;
 	}
-
 	// first scan to find the device and get the page size
-	if ((err = nand_scan_ident(&info->mtd, 1, NULL)) < 0) {
+	if ((err = nand_scan_ident(&info->mtd, 2, NULL)) < 0) {
 		ERR_INFO("nand scan ident fail\n");
 		goto out_nfc_exit;
 	}
-
 	// init NFC with flash chip info got from first scan
 	if ((err = nfc_second_init(&info->mtd)) < 0) {
 		ERR_INFO("nfc second init fail\n");
 		goto out_nfc_exit;
 	}
-
 	// second phase scan
 	if ((err = nand_scan_tail(&info->mtd)) < 0) {
 		ERR_INFO("nand scan tail fail\n");
 		goto out_nfc_exit;
 	}
 
-	if ((err = mtd_device_parse_register(&info->mtd, NULL, NULL, NULL, 0)) < 0) {
+	if ((err =
+	     mtd_device_parse_register(&info->mtd, NULL, NULL, NULL, 0)) < 0) {
 		ERR_INFO("register mtd device fail\n");
 		goto out_release_nand;
 	}
@@ -121,21 +119,21 @@ static int nand_resume(struct platform_device *pdev)
 	return 0;
 }
 
-static void	nfc_dev_release(struct device *dev)
+static void nfc_dev_release(struct device *dev)
 {
 
 }
 
 static struct platform_driver plat_driver = {
-	.probe		= nand_probe,
-	.remove		= nand_remove,
-	.shutdown   = nand_shutdown,
-	.suspend    = nand_suspend,
-	.resume     = nand_resume,
-	.driver		= {
-		.name	= DRIVER_NAME,
-		.owner	= THIS_MODULE,
-	},
+	.probe = nand_probe,
+	.remove = nand_remove,
+	.shutdown = nand_shutdown,
+	.suspend = nand_suspend,
+	.resume = nand_resume,
+	.driver = {
+		   .name = DRIVER_NAME,
+		   .owner = THIS_MODULE,
+		   },
 };
 
 static struct platform_device plat_device = {
@@ -143,7 +141,7 @@ static struct platform_device plat_device = {
 	.id = 0,
 	.dev = {
 		.release = nfc_dev_release,
-	},
+		},
 };
 
 int nand1k_init(void);
@@ -154,13 +152,14 @@ static int __init nand_init(void)
 	int err;
 	int nand_used = 0;
 
-    if (script_parser_fetch("nand_para", "nand_used", &nand_used, sizeof(int)))
-    	ERR_INFO("nand init fetch emac using configuration failed\n");
+	if (script_parser_fetch
+	    ("nand_para", "nand_used", &nand_used, sizeof(int)))
+		ERR_INFO("nand init fetch emac using configuration failed\n");
 
-    if(nand_used == 0) {
-        DBG_INFO("nand driver is disabled \n");
-        return 0;
-    }
+	if (nand_used == 0) {
+		DBG_INFO("nand driver is disabled \n");
+		return 0;
+	}
 
 	DBG_INFO("nand driver, init.\n");
 
@@ -188,13 +187,14 @@ static void __exit nand_exit(void)
 {
 	int nand_used = 0;
 
-    if (script_parser_fetch("nand_para", "nand_used", &nand_used, sizeof(int)))
-    	ERR_INFO("nand init fetch emac using configuration failed\n");
+	if (script_parser_fetch
+	    ("nand_para", "nand_used", &nand_used, sizeof(int)))
+		ERR_INFO("nand init fetch emac using configuration failed\n");
 
-    if(nand_used == 0) {
-        DBG_INFO("nand driver is disabled \n");
-        return;
-    }
+	if (nand_used == 0) {
+		DBG_INFO("nand driver is disabled \n");
+		return;
+	}
 
 	nand1k_exit();
 	platform_device_unregister(&plat_device);
@@ -204,7 +204,3 @@ static void __exit nand_exit(void)
 
 module_init(nand_init);
 module_exit(nand_exit);
-
-
-
-

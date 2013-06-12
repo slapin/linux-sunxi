@@ -28,22 +28,25 @@ static int nanddma_completed_flag = 1;
 static DECLARE_WAIT_QUEUE_HEAD(DMA_wait);
 
 static struct sw_dma_client nand_dma_client = {
-	.name="NAND_DMA",
+	.name = "NAND_DMA",
 };
 
-static void nanddma_buffdone(struct sw_dma_chan * ch, void *buf, int size, enum sw_dma_buffresult result)
+static void nanddma_buffdone(struct sw_dma_chan *ch, void *buf, int size,
+			     enum sw_dma_buffresult result)
 {
 	nanddma_completed_flag = 1;
 	wake_up(&DMA_wait);
-	//DBG_INFO("buffer done. nanddma_completed_flag: %d\n", nanddma_completed_flag);
+	DBG_INFO("buffer done. nanddma_completed_flag: %d\n",
+		 nanddma_completed_flag);
 }
 
-static int nanddma_opfn(struct sw_dma_chan * ch,   enum sw_chan_op op_code)
+static int nanddma_opfn(struct sw_dma_chan *ch, enum sw_chan_op op_code)
 {
-	if(op_code == SW_DMAOP_START)
+	if (op_code == SW_DMAOP_START)
 		nanddma_completed_flag = 0;
 
-	//DBG_INFO("buffer opfn: %d, nanddma_completed_flag: %d\n", (int)op_code, nanddma_completed_flag);
+	DBG_INFO("buffer opfn: %d, nanddma_completed_flag: %d\n", (int)op_code,
+		 nanddma_completed_flag);
 
 	return 0;
 }
@@ -51,9 +54,9 @@ static int nanddma_opfn(struct sw_dma_chan * ch,   enum sw_chan_op op_code)
 int dma_nand_request(unsigned int dmatype)
 {
 	int ch;
-
+	DBG_INFO("DMA request");
 	ch = sw_dma_request(DMACH_DNAND, &nand_dma_client, NULL);
-	if(ch < 0)
+	if (ch < 0)
 		return ch;
 
 	sw_dma_set_opfn(ch, nanddma_opfn);
@@ -64,53 +67,53 @@ int dma_nand_request(unsigned int dmatype)
 
 int dma_nand_release(int hDma)
 {
+	DBG_INFO("DMA release \n");
 	return sw_dma_free(hDma, &nand_dma_client);
 }
 
-
 static int dma_set(int hDMA, void *pArg)
 {
+	DBG_INFO("DMA set \n");
 	sw_dma_setflags(hDMA, SW_DMAF_AUTOSTART);
-	return sw_dma_config(hDMA, (struct dma_hw_conf*)pArg);
+	return sw_dma_config(hDMA, (struct dma_hw_conf *)pArg);
 }
-
 
 static int dma_enqueue(int hDma, unsigned int buff_addr, size_t len)
 {
-	static int seq=0;
+	static int seq = 0;
+	DBG_INFO("DMA enqueue \n");
 	__cpuc_flush_dcache_area((void *)buff_addr, len + (1 << 5) * 2 - 2);
 	nanddma_completed_flag = 0;
-	return sw_dma_enqueue(hDma, (void*)(seq++), buff_addr, len);
+	return sw_dma_enqueue(hDma, (void *)(seq++), buff_addr, len);
 }
 
 void dma_nand_config_start(int dma, int rw, unsigned int buff_addr, size_t len)
 {
+
 	struct dma_hw_conf nand_hwconf = {
 		.xfer_type = DMAXFER_D_BWORD_S_BWORD,
 		.hf_irq = SW_DMA_IRQ_FULL,
 		.cmbk = 0x7f077f07,
 	};
-
+	DBG_INFO("DMA configuration starting \n");
 	nand_hwconf.dir = rw + 1;
 
-	if(rw == 0) {
+	if (rw == 0) {
 		nand_hwconf.from = 0x01C03030,
-		nand_hwconf.address_type = DMAADDRT_D_LN_S_IO,
-		nand_hwconf.drqsrc_type = DRQ_TYPE_NAND;
-	}
-	else {
+		    nand_hwconf.address_type = DMAADDRT_D_LN_S_IO,
+		    nand_hwconf.drqsrc_type = DRQ_TYPE_NAND;
+	} else {
 		nand_hwconf.to = 0x01C03030,
-		nand_hwconf.address_type = DMAADDRT_D_IO_S_LN,
-		nand_hwconf.drqdst_type = DRQ_TYPE_NAND;
+		    nand_hwconf.address_type = DMAADDRT_D_IO_S_LN,
+		    nand_hwconf.drqdst_type = DRQ_TYPE_NAND;
 	}
 
-	dma_set(dma, (void*)&nand_hwconf);
+	dma_set(dma, (void *)&nand_hwconf);
 	dma_enqueue(dma, buff_addr, len);
 }
 
 int dma_nand_wait_finish(void)
 {
 	wait_event(DMA_wait, nanddma_completed_flag);
-    return 0;
+	return 0;
 }
-

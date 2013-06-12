@@ -26,7 +26,7 @@
 
 #include <linux/kernel.h>
 
-#define DBG_INFO(fmt, ...) printk(KERN_INFO PREFIX fmt, ##__VA_ARGS__)
+#define DBG_INFO(fmt, ...)
 #define ERR_INFO(fmt, ...) printk(KERN_ERR PREFIX fmt, ##__VA_ARGS__)
 
 #else /* !__LINUX__ */

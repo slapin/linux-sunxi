@@ -1,8 +1,8 @@
 #ifndef _SUNXI_NAND_REGS_H
 #define _SUNXI_NAND_REGS_H
 
-#define CCM_IO_BASE                   0xf1c20000
-#define PLL5_CFG_REG                  (CCM_IO_BASE + 0x20)
+#define   CCM_IO_BASE                   0xf1c20000
+#define   PLL5_CFG_REG                  (CCM_IO_BASE + 0x20)
 #define   PLL5_OUT_EXT_DIV_P_SHIFT    16
 #define   PLL5_OUT_EXT_DIV_P_MASK     (0x03 << PLL5_OUT_EXT_DIV_P_SHIFT)
 #define   PLL5_FACTOR_N_SHIFT         8
@@ -11,9 +11,9 @@
 #define   PLL5_FACTOR_K_MASK          (0x03 << PLL5_FACTOR_K_SHIFT)
 #define   PLL5_FACTOR_M_SHIFT         0
 #define   PLL5_FACTOR_M_MASK          (0x03 << PLL5_FACTOR_M_SHIFT)
-#define AHB_GATING_REG0               (CCM_IO_BASE + 0x60)
+#define   AHB_GATING_REG0               (CCM_IO_BASE + 0x60)
 #define   AHB_GATING_NAND_CLK_SHIFT   13
-#define NAND_SCLK_CFG_REG             (CCM_IO_BASE + 0x80)
+#define   NAND_SCLK_CFG_REG             (CCM_IO_BASE + 0x80)
 #define   SCLK_GATING_SHIFT           31
 #define   CLK_SRC_SEL_SHIFT           24
 #define   CLK_SRC_SEL_MASK            (0x03 << CLK_SRC_SEL_SHIFT)
@@ -28,7 +28,7 @@
 #define PC_CFG2_REG                   (PIO_IO_BASE + 0x50)
 
 #define NAND_IO_BASE		0xf1c03000
-#define __NFC_REG(x)        (NAND_IO_BASE + x)
+#define __NFC_REG(x)		(NAND_IO_BASE + x)
 /* offset */
 #define NFC_REG_o_CTL              0x0000
 #define NFC_REG_o_ST               0x0004
@@ -81,92 +81,90 @@
 #define NFC_RAM1_BASE              __NFC_REG( NFC_o_RAM1_BASE           )
 
 /*define bit use in NFC_CTL*/
-#define NFC_EN					(1 << 0)
-#define NFC_RESET				(1 << 1)
-#define NFC_BUS_WIDYH			(1 << 2)
-#define NFC_RB_SEL				(1 << 3)
-#define NFC_CE_SEL				(7 << 24)
-#define NFC_CE_CTL				(1 << 6)
-#define NFC_CE_CTL1				(1 << 7)
-#define NFC_PAGE_SIZE			(0xf << 8)
-#define NFC_SAM					(1 << 12)
-#define NFC_RAM_METHOD			(1 << 14)
-#define NFC_DEBUG_CTL			(1 << 31)
+#define NFC_EN			(1 << 0)
+#define NFC_RESET		(1 << 1)
+#define NFC_BUS_WIDTH		(1 << 2)
+#define NFC_RB_SEL		(1 << 3)
+#define NFC_CE_SEL		(1 << 24)
+#define NFC_CE_CTL		(1 << 6)
+#define NFC_CE_CTL1		(1 << 7)
+#define NFC_PAGE_SIZE		(0xf << 8)
+#define NFC_SAM			(1 << 12)
+#define NFC_RAM_METHOD		(1 << 14)
+#define NFC_DEBUG_CTL		(1 << 31)
 
 /*define bit use in NFC_ST*/
-#define NFC_RB_B2R				(1 << 0)
-#define NFC_CMD_INT_FLAG		(1 << 1)
-#define NFC_DMA_INT_FLAG		(1 << 2)
-#define NFC_CMD_FIFO_STATUS		(1 << 3)
-#define NFC_STA					(1 << 4)
-#define NFC_NATCH_INT_FLAG		(1 << 5)
-#define NFC_RB_STATE0			(1 << 8)
-#define NFC_RB_STATE1			(1 << 9)
-#define NFC_RB_STATE2			(1 << 10)
-#define NFC_RB_STATE3			(1 << 11)
+#define NFC_RB_B2R		(1 << 0)
+#define NFC_CMD_INT_FLAG	(1 << 1)
+#define NFC_DMA_INT_FLAG	(1 << 2)
+#define NFC_CMD_FIFO_STATUS	(1 << 3)
+#define NFC_STA			(1 << 4)
+#define NFC_NATCH_INT_FLAG	(1 << 5)
+#define NFC_RB_STATE0		(1 << 8)
+#define NFC_RB_STATE1		(1 << 9)
+#define NFC_RB_STATE2		(1 << 10)
+#define NFC_RB_STATE3		(1 << 11)
 
 /*define bit use in NFC_INT*/
-#define NFC_B2R_INT_ENABLE		(1 << 0)
-#define NFC_CMD_INT_ENABLE		(1 << 1)
-#define NFC_DMA_INT_ENABLE		(1 << 2)
-
+#define NFC_B2R_INT_ENABLE	(1 << 0)
+#define NFC_CMD_INT_ENABLE	(1 << 1)
+#define NFC_DMA_INT_ENABLE	(1 << 2)
 
 /*define bit use in NFC_CMD*/
-#define NFC_CMD_LOW_BYTE		(0xff << 0)
-#define NFC_CMD_HIGH_BYTE		(0xff << 8)
-#define NFC_ADR_NUM				(0x7 << 16)
-#define NFC_SEND_ADR			(1 << 19)
-#define NFC_ACCESS_DIR			(1 << 20)
-#define NFC_DATA_TRANS			(1 << 21)
-#define NFC_SEND_CMD1			(1 << 22)
-#define NFC_WAIT_FLAG			(1 << 23)
-#define NFC_SEND_CMD2			(1 << 24)
-#define NFC_SEQ					(1 << 25)
+#define NFC_CMD_LOW_BYTE	(0xff << 0)
+#define NFC_CMD_HIGH_BYTE	(0xff << 8)
+#define NFC_ADR_NUM		(0x7 << 16)
+#define NFC_SEND_ADR		(1 << 19)
+#define NFC_ACCESS_DIR		(1 << 20)
+#define NFC_DATA_TRANS		(1 << 21)
+#define NFC_SEND_CMD1		(1 << 22)
+#define NFC_WAIT_FLAG		(1 << 23)
+#define NFC_SEND_CMD2		(1 << 24)
+#define NFC_SEQ			(1 << 25)
 #define NFC_DATA_SWAP_METHOD	(1 << 26)
-#define NFC_ROW_AUTO_INC		(1 << 27)
+#define NFC_ROW_AUTO_INC	(1 << 27)
 #define NFC_SEND_CMD3           (1 << 28)
 #define NFC_SEND_CMD4           (1 << 29)
-#define NFC_CMD_TYPE			(3 << 30)
+#define NFC_CMD_TYPE		(3 << 30)
 
 /* define bit use in NFC_RCMD_SET*/
-#define NFC_READ_CMD			(0xff<< 0)
+#define NFC_READ_CMD		(0xff<< 0)
 #define NFC_RANDOM_READ_CMD0 	(0xff << 8)
 #define NFC_RANDOM_READ_CMD1 	(0xff << 16)
 
 /*define bit use in NFC_WCMD_SET*/
-#define NFC_PROGRAM_CMD			(0xff << 0)
+#define NFC_PROGRAM_CMD		(0xff << 0)
 #define NFC_RANDOM_WRITE_CMD	(0xff << 8)
-#define NFC_READ_CMD0			(0xff << 16)
+#define NFC_READ_CMD0		(0xff << 16)
 #define NFC_READ_CMD1	        (0xff << 24)
 
 /*define bit use in NFC_ECC_CTL*/
-#define NFC_ECC_EN				(1 << 0)
-#define NFC_ECC_PIPELINE		(1 << 3)
+#define NFC_ECC_EN		(1 << 0)
+#define NFC_ECC_PIPELINE	(1 << 3)
 #define NFC_ECC_EXCEPTION       (1 << 4)
-#define NFC_ECC_BLOCK_SIZE		(1 << 5)
-#define NFC_RANDOM_EN           (1 << 9 )
-#define NFC_RANDOM_DIRECTION    (1 << 10 )
+#define NFC_ECC_BLOCK_SIZE	(1 << 5)
+#define NFC_RANDOM_EN           (1 << 9)
+#define NFC_RANDOM_DIRECTION    (1 << 10)
 #define NFC_ECC_MODE_SHIFT      12
-#define NFC_ECC_MODE			(0xf << NFC_ECC_MODE_SHIFT)
+#define NFC_ECC_MODE		(0xf << NFC_ECC_MODE_SHIFT)
 #define NFC_RANDOM_SEED         (0x7fff << 16)
 
-#define NFC_IRQ_MAJOR		    13
+#define NFC_IRQ_MAJOR		13
 /*cmd flag bit*/
-#define NFC_PAGE_MODE  			0x1
-#define NFC_NORMAL_MODE  		0x0
+#define NFC_PAGE_MODE  		0x1
+#define NFC_NORMAL_MODE  	0x0
 
-#define NFC_DATA_FETCH 			0x1
-#define NFC_NO_DATA_FETCH 		0x0
+#define NFC_DATA_FETCH 		0x1
+#define NFC_NO_DATA_FETCH 	0x0
 #define NFC_MAIN_DATA_FETCH 	0x1
 #define NFC_SPARE_DATA_FETCH	0X0
-#define NFC_WAIT_RB				0x1
-#define NFC_NO_WAIT_RB			0x0
-#define NFC_IGNORE				0x0
+#define NFC_WAIT_RB		0x1
+#define NFC_NO_WAIT_RB		0x0
+#define NFC_IGNORE		0x0
 
-#define NFC_INT_RB				0
-#define NFC_INT_CMD				1
-#define NFC_INT_DMA				2
-#define NFC_INT_BATCh			5
+#define NFC_INT_RB		0
+#define NFC_INT_CMD		1
+#define NFC_INT_DMA		2
+#define NFC_INT_BATCH		5
 
 #endif
-
