@@ -93,6 +93,8 @@ static struct nand_ecclayout nand_oob_128 = {
 		 .length = 78} }
 };
 
+
+
 static int nand_get_device(struct nand_chip *chip, struct mtd_info *mtd,
 			   int new_state);
 
@@ -3026,6 +3028,48 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 			mtd->erasesize = (128 * 1024) <<
 				(((extid >> 1) & 0x04) | (extid & 0x03));
 			busw = 0;
+		} else if (id_data[0] == NAND_MFR_HYNIX &&
+                         (chip->cellinfo & NAND_CI_CELLTYPE_MSK)) {
+                 unsigned int tmp;
+ 
+                 /* Calc pagesize */
+                 mtd->writesize = 2048 << (extid & 0x03);
+                 extid >>= 2;
+                 /* Calc oobsize */
+                 switch (((extid >> 2) & 0x04) | (extid & 0x03)) {
+                 case 0:
+                         mtd->oobsize = 128;
+                         break;
+                 case 1:
+                         mtd->oobsize = 224;
+                         break;
+                 case 2:
+                         mtd->oobsize = 448;
+                         break;
+                 case 3:
+                         mtd->oobsize = 64;
+                         break;
+                 case 4:
+                         mtd->oobsize = 32;
+                         break;
+                 case 5:
+                         mtd->oobsize = 16;
+                         break;
+                 default:
+                         mtd->oobsize = 448;
+                         break;
+                 }
+                 extid >>= 2;
+                 /* Calc blocksize */
+                 tmp = ((extid >> 1) & 0x04) | (extid & 0x03);
+                 if (tmp < 0x03)
+                         mtd->erasesize = (128 * 1024) << tmp;
+                 else if (tmp == 0x03)
+                         mtd->erasesize = 768 * 1024;
+                 else
+                         mtd->erasesize = (64 * 1024) << tmp;
+                 busw = 0;
+
 		} else {
 			/* Calc pagesize */
 			mtd->writesize = 1024 << (extid & 0x03);
@@ -3259,6 +3303,9 @@ int nand_scan_tail(struct mtd_info *mtd)
 		case 128:
 			chip->ecc.layout = &nand_oob_128;
 			break;
+		//case 448:
+		//	chip->ecc.layout = &nand_oob_448;
+		//	break;
 		default:
 			pr_warn("No oob scheme defined for oobsize %d\n",
 				   mtd->oobsize);
